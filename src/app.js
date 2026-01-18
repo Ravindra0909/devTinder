@@ -8,13 +8,20 @@ app.use("/hi",(req,res)=>{
     res.send("Hello");
 })
 
-app.use("/hello",(req,res)=>{
-    res.send(" Welcome..");
-})
+ app.get("/user",(req,res) => {
+    res.send({
+        firstName : "Ravindra",
+        lastName : "Koppada"
+    });
+ })
 
-app.use("/bye",(req,res)=>{
-    res.send("Hello, Welcome");
-})
+ app.post("/user",(req,res) => {
+    console.log("Saved data to the databases");
+    res.send("Data Successfully saved to the databases");
+ })
+ app.delete("/user",(req,res) => {
+    res.send("Deleted Successfully");
+ })
 
 app.use("/",(req,res)=>{
     res.send("Hello, Welcome to the port 3000...");
