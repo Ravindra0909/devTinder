@@ -9,6 +9,7 @@ app.use("/hi",(req,res)=>{
 })
 
  app.get("/user",(req,res) => {
+    console.log(req.query);
     res.send({
         firstName : "Ravindra",
         lastName : "Koppada"
