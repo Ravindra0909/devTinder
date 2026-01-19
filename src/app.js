@@ -2,6 +2,15 @@ const express = require('express');
 
 const app = express();
 
+app.get("/user",(req,res,next)=>{
+    //res.send("Response!!!");
+    next();
+    console.log("hello")
+})
+
+app.get("/user",(req,res,next)=>{
+    res.send("Response2!!!");
+})
 
 
 app.use("/hi",(req,res)=>{
@@ -24,9 +33,7 @@ app.use("/hi",(req,res)=>{
     res.send("Deleted Successfully");
  })
 
-app.use("/",(req,res)=>{
-    res.send("Hello, Welcome to the port 3000...");
-})
+
 app.listen(3000,() => {
     console.log("Server successfully running on port 3000...");
 });
