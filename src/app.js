@@ -5,22 +5,54 @@ const User = require("./models/user");
 
 const app = express();
 
-app.post("/signup",async (req,res) => {
+app.use(express.json());
 
-    const user = new User({
-        firstName : "Virat",
-        lastName : "Kohli",
-        emailId : "virat@gmail.com",
-        password : "virat123",
-        age : 36,
-        gender : "male"
-    })
+app.post("/signup",async (req,res) => {
+    
+
+    const user = new User(req.body);
 
     try{
         await user.save();
         res.send("User signed up successfully");
     }catch(err){
         res.status(400).send("Error saving to the user:" + err.message);
+    }
+});
+
+// get User by emailId
+app.get("/user",async (req,res)=>{
+    const getEmailId = req.body.emailId;
+    const userData = await User.find({emailId : getEmailId});
+
+    try{
+    if(userData.length === 0){
+        res.status(404).send("User not found");
+    }else{
+        res.send(userData);
+    }
+
+    }catch(err){
+        res.status(500).send("Something went wrong " + err.message);
+    }
+    
+   
+})
+
+
+//feed API - Get all users from the database
+
+app.get("/feed", async (req,res) => {
+    const allUsersData = await User.find({});
+
+    try{
+        if(allUsersData.length === 0){
+            res.status(404).send("No users found");
+        }else{
+            res.send(allUsersData);
+        }
+    }catch(err){
+        res.status(500).send("Something went wrong " + err.message);
     }
 })
 
