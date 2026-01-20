@@ -23,9 +23,8 @@ app.post("/signup",async (req,res) => {
 // get User by emailId
 app.get("/user",async (req,res)=>{
     const getEmailId = req.body.emailId;
-    const userData = await User.find({emailId : getEmailId});
-
     try{
+    const userData = await User.find({emailId : getEmailId});
     if(userData.length === 0){
         res.status(404).send("User not found");
     }else{
@@ -43,9 +42,8 @@ app.get("/user",async (req,res)=>{
 //feed API - Get all users from the database
 
 app.get("/feed", async (req,res) => {
-    const allUsersData = await User.find({});
-
     try{
+        const allUsersData = await User.find({});
         if(allUsersData.length === 0){
             res.status(404).send("No users found");
         }else{
@@ -56,7 +54,31 @@ app.get("/feed", async (req,res) => {
     }
 })
 
+// Deleting a user by ID
+app.delete("/user",async (req,res) => {
+    const userId = req.body.userId;
 
+    try{
+        await User.findByIdAndDelete(userId);
+        res.send("User deleted successfully");
+    }catch(err){
+        res.status(500).send("Something went wrong " + err.message);
+    }
+})
+
+// Updating the users in the database
+app.patch("/user", async (req,res) => {
+    const userId = req.body.userId;
+    const data = req.body;
+
+    try{
+       const updatedData = await User.findByIdAndUpdate(userId, data, {returnDocument: "after"});
+       console.log(updatedData);
+        res.send("User data updated successfully");
+    }catch(err){
+        res.status(500).send("Something went wrong " + err.message);
+    }
+})
 
 
 connectDB().then(()=>{
