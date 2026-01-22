@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 
 const userSchema = new mongoose.Schema({
@@ -14,12 +15,22 @@ const userSchema = new mongoose.Schema({
         type : String,
         required : true,
         unique : true,
-        lowercase : true
-
+        lowercase : true,
+        trim : true,
+        validate(value){
+            if(validator.isEmail(value) === false){
+                throw new Error("Email is not valid");
+            }
+        }
     },
     password : {
         type : String,
-        required : true
+        required : true,
+        validate(value){
+            if(validator.isStrongPassword(value) === false){
+                throw new Error("Password is not strong enough");
+            }
+        }
     },
     age : {
         type : Number,
@@ -35,7 +46,12 @@ const userSchema = new mongoose.Schema({
     },
     photoUrl : {
         type : String,
-        default : "https://hemsichd.org/wp-content/uploads/2021/01/blank-profile-picture.jpeg"
+        default : "https://hemsichd.org/wp-content/uploads/2021/01/blank-profile-picture.jpeg",
+        validate(value){
+            if(validator.isURL(value) === false){
+                throw new Error("Photo URL is not valid");
+            }
+        }
     },
     about : {
         type : String,
