@@ -7,88 +7,31 @@ const connectDB = require("./config/database");
 const User = require("./models/user");
 const { validateSignupData } = require("./utils/validation");
 const { userAuth } = require("./middlewares/auth");
-const e = require('express');
+
 
 const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
 
+
+const authRouter = require("./routes/auth");
+const profileRouter = require("./routes/profile");
+const requestsRouter = require("./routes/requests");
+
+app.use("/", authRouter);
+app.use("/", profileRouter);
+app.use("/", requestsRouter);
+
 // signup API
-app.post("/signup",async (req,res) => {
-    
-    try{
-        // validation of signup data
-        validateSignupData(req);
-
-        //encrypt the password
-        const {password,firstName,lastName,emailId} = req.body;
-        const passwordHash = await bcrypt.hash(password,10);
-        const user = new User({
-            firstName,
-            lastName,
-            emailId,
-            password : passwordHash,
-        });
-
-        await user.save();
-        res.send("User signed up successfully");
-    }catch(err){
-        res.status(400).send("Error saving to the user:" + err.message);
-    }
-});
 
 // Login API
-app.post("/login", async (req,res) => {
 
-    try{
-        const {emailId, password} = req.body;  
-        const userData = await User.findOne({emailId : emailId})
-        if(!userData){
-            throw new Error("Invalid Credentials");
-        }
-        // verifying password
-        const isPasswordMatch = await userData.verifyPassword(password);
-
-        if(isPasswordMatch){
-            // creating JWT token
-            const token = await userData.getJWT();
-            //storing token in cookie
-            res.cookie("token",token, {expiresIn : new Date(Date.now() + 8*3600000)});
-
-            res.send("User logged in successfully");
-        }else{
-            throw new Error("Invalid Credentials");
-        }
-    }catch(err){
-        res.status(500).send("ERROR : " + err.message);
-    }
-});   
 
 //sending connection request
 
-app.post("/sendConnectionRequest",userAuth, async (req,res) => {
-    try{
-        const user = req.user;
-        res.send("Connection request sent from " + user.firstName);
-    }catch(err){
-        res.status(500).send("Error : " + err.message);
-    }
-});
-
 // get profile API
-app.get("/profile",userAuth,async (req,res) => {
-   try{ 
-    const userData = req.user;
-    if(!userData){
-        throw new Error("User not found");
-    }
 
-    res.send(userData);
-    }catch(err){
-        res.status(400).send("Error : " + err.message);
-    }
-})
 
 // get User by emailId
 app.get("/user",async (req,res)=>{
