@@ -12,15 +12,16 @@
 - DELETE/profile/delete
 
 ## connectionRequestRouter
-- POST/request/send/interested/:userId
-- POST/request/send/ignored/:userId
-- PATCH/request/recieve/accept/:requestId
-- PATCH/request/recieve/reject/:requestId
+- POST/request/send/:status/:userId     //interested
+- POST/request/send/:status/:userId     //ignored
+
+- POST/request/review/:status/:requestId   //accepted
+- POST/request/review/:status/:requestId   //rejected
 
 ## userRouter
 - GET/users/feed
 - GET/users/connections
-- GET/users/requests
+- GET/user/request/recieved
 
 
 
