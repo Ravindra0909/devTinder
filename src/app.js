@@ -2,10 +2,10 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 
 const connectDB = require("./config/database");
-const User = require("./models/user");
-const { validateSignupData } = require("./utils/validation");
-const { userAuth } = require("./middlewares/auth");
+
 const cors = require("cors");
+
+require("dotenv").config();
 
 const app = express();
 
