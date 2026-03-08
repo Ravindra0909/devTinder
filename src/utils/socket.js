@@ -18,8 +18,6 @@ const initializeSocket = (server) => {
   });
 
   io.on("connection", (socket) => {
-    // Handle events
-
     socket.on("userOnline", (userId) => {
       onlineUsers.set(userId, socket.id);
 
