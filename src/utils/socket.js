@@ -8,6 +8,8 @@ const getSecretRoomId = (userId, targetUserId) => {
     .digest("hex");
 };
 
+const onlineUsers = new Map();
+
 const initializeSocket = (server) => {
   const io = socket(server, {
     cors: {
@@ -17,6 +19,12 @@ const initializeSocket = (server) => {
 
   io.on("connection", (socket) => {
     // Handle events
+
+    socket.on("userOnline", (userId) => {
+      onlineUsers.set(userId, socket.id);
+
+      io.emit("onlineUsers", Array.from(onlineUsers.keys()));
+    });
 
     socket.on("joinChat", ({ firstName, userId, targetUserId }) => {
       const roomId = getSecretRoomId(userId, targetUserId);
@@ -57,7 +65,15 @@ const initializeSocket = (server) => {
         }
       },
     );
-    socket.on("disconnect", () => {});
+    socket.on("disconnect", () => {
+      for (let [userId, socketId] of onlineUsers.entries()) {
+        if (socketId === socket.id) {
+          onlineUsers.delete(userId);
+          break;
+        }
+      }
+      io.emit("onlineUsers", Array.from(onlineUsers.keys()));
+    });
   });
 };
 
